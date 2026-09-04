@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Juribi.Views.JobApplicationDetailPage"
+             Title="Details">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="18">
+
+            <!-- Validation warning -->
+            <Border IsVisible="{Binding HasErrors}"
+                    BackgroundColor="#FDECEA"
+                    Stroke="#D32F2F"
+                    StrokeThickness="1"
+                    Padding="12">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="This entry has validation problems:"
+                           FontAttributes="Bold"
+                           TextColor="#B71C1C" />
+                    <CollectionView ItemsSource="{Binding Entry.Errors}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" TextColor="#B71C1C" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Job name" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                <Label Text="{Binding Entry.JobName}" FontSize="18" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Company" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                <Label Text="{Binding Entry.Company}" FontSize="18" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Salary" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                <Label Text="{Binding Entry.Salary}" FontSize="18" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Status" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                <Label Text="{Binding Entry.Status}" FontSize="18" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Job link" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                <Label Text="{Binding Entry.JobUrl}" FontSize="18" TextColor="{AppThemeBinding Light=#1565C0, Dark=#64B5F6}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenLinkCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Button Text="Open link"
+                        Command="{Binding OpenLinkCommand}"
+                        IsVisible="{Binding HasLink}"
+                        HorizontalOptions="Start"
+                        Margin="0,6,0,0" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
