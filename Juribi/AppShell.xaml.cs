@@ -8,6 +8,7 @@ namespace Juribi
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(JobApplicationDetailPage), typeof(JobApplicationDetailPage));
+            Routing.RegisterRoute(nameof(JobApplicationEditPage), typeof(JobApplicationEditPage));
         }
     }
 }

@@ -36,21 +36,7 @@ namespace Juribi.Services
 
         public async Task<IReadOnlyList<JobApplication>> GetAllAsync()
         {
-            await EnsureSeededAsync();
-
-            List<JobApplicationRecord> records;
-            try
-            {
-                var json = await File.ReadAllTextAsync(_filePath);
-                records = JsonSerializer.Deserialize<List<JobApplicationRecord>>(json, SerializerOptions)
-                          ?? new List<JobApplicationRecord>();
-            }
-            catch (JsonException)
-            {
-                // The whole file is unreadable; treat as empty rather than crashing.
-                records = new List<JobApplicationRecord>();
-            }
-
+            var records = await ReadRecordsAsync();
             return records.Select(_validator.Validate).ToList();
         }
 
@@ -58,6 +44,68 @@ namespace Juribi.Services
         {
             var all = await GetAllAsync();
             return all.FirstOrDefault(entry => entry.Id == id);
+        }
+
+        public async Task AddAsync(JobApplicationRecord record)
+        {
+            ArgumentNullException.ThrowIfNull(record);
+
+            if (string.IsNullOrWhiteSpace(record.Id))
+                record.Id = Guid.NewGuid().ToString("N");
+
+            var records = await ReadRecordsAsync();
+            records.Add(record);
+            await WriteRecordsAsync(records);
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return;
+
+            var records = await ReadRecordsAsync();
+            var removed = records.RemoveAll(record => record.Id == id);
+            if (removed > 0)
+                await WriteRecordsAsync(records);
+        }
+
+        public async Task UpdateAsync(JobApplicationRecord record)
+        {
+            ArgumentNullException.ThrowIfNull(record);
+
+            if (string.IsNullOrWhiteSpace(record.Id))
+                return;
+
+            var records = await ReadRecordsAsync();
+            var index = records.FindIndex(existing => existing.Id == record.Id);
+            if (index < 0)
+                return;
+
+            records[index] = record;
+            await WriteRecordsAsync(records);
+        }
+
+        private async Task<List<JobApplicationRecord>> ReadRecordsAsync()
+        {
+            await EnsureSeededAsync();
+
+            try
+            {
+                var json = await File.ReadAllTextAsync(_filePath);
+                return JsonSerializer.Deserialize<List<JobApplicationRecord>>(json, SerializerOptions)
+                       ?? new List<JobApplicationRecord>();
+            }
+            catch (JsonException)
+            {
+                // The whole file is unreadable; treat as empty rather than crashing.
+                return new List<JobApplicationRecord>();
+            }
+        }
+
+        private async Task WriteRecordsAsync(IReadOnlyList<JobApplicationRecord> records)
+        {
+            var json = JsonSerializer.Serialize(records, SerializerOptions);
+            await File.WriteAllTextAsync(_filePath, json);
         }
 
         private async Task EnsureSeededAsync()

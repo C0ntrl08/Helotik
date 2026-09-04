@@ -4,62 +4,140 @@
              x:Class="Juribi.Views.JobApplicationDetailPage"
              Title="Details">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding GoBackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit"
+                     Command="{Binding EditCommand}" />
+    </ContentPage.ToolbarItems>
+
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="18">
 
-            <!-- Validation warning -->
-            <Border IsVisible="{Binding HasErrors}"
-                    BackgroundColor="#FDECEA"
-                    Stroke="#D32F2F"
-                    StrokeThickness="1"
-                    Padding="12">
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="This entry has validation problems:"
-                           FontAttributes="Bold"
-                           TextColor="#B71C1C" />
-                    <CollectionView ItemsSource="{Binding Entry.Errors}"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding .}" TextColor="#B71C1C" />
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+            <!-- Read-only view -->
+            <VerticalStackLayout Spacing="18"
+                                 IsVisible="{Binding IsEditing, Converter={StaticResource InvertedBoolConverter}}">
+
+                <!-- Validation warning -->
+                <Border IsVisible="{Binding HasErrors}"
+                        BackgroundColor="#FDECEA"
+                        Stroke="#D32F2F"
+                        StrokeThickness="1"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="This entry has validation problems:"
+                               FontAttributes="Bold"
+                               TextColor="#B71C1C" />
+                        <CollectionView ItemsSource="{Binding Entry.Errors}"
+                                        SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="{Binding .}" TextColor="#B71C1C" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Job name" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Entry.JobName}" FontSize="18" />
                 </VerticalStackLayout>
-            </Border>
 
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Job name" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
-                <Label Text="{Binding Entry.JobName}" FontSize="18" />
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Company" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Entry.Company}" FontSize="18" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Salary" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Entry.Salary}" FontSize="18" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Status" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Entry.Status}" FontSize="18" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Job link" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Label Text="{Binding Entry.JobUrl}" FontSize="18" TextColor="{AppThemeBinding Light=#1565C0, Dark=#64B5F6}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLinkCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Button Text="Open link"
+                            Command="{Binding OpenLinkCommand}"
+                            IsVisible="{Binding HasLink}"
+                            HorizontalOptions="Start"
+                            Margin="0,6,0,0" />
+                </VerticalStackLayout>
+
             </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Company" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
-                <Label Text="{Binding Entry.Company}" FontSize="18" />
-            </VerticalStackLayout>
+            <!-- Edit form -->
+            <VerticalStackLayout Spacing="16"
+                                 IsVisible="{Binding IsEditing}">
 
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Salary" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
-                <Label Text="{Binding Entry.Salary}" FontSize="18" />
-            </VerticalStackLayout>
+                <!-- Edit validation errors -->
+                <Border IsVisible="{Binding HasEditErrors}"
+                        BackgroundColor="#FDECEA"
+                        Stroke="#D32F2F"
+                        StrokeThickness="1"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Please fix the following before saving:"
+                               FontAttributes="Bold"
+                               TextColor="#B71C1C" />
+                        <CollectionView ItemsSource="{Binding EditErrors}"
+                                        SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="{Binding .}" TextColor="#B71C1C" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
 
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Status" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
-                <Label Text="{Binding Entry.Status}" FontSize="18" />
-            </VerticalStackLayout>
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Job name" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Entry Text="{Binding EditJobName}" Placeholder="e.g. Senior .NET Developer" />
+                </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="2">
-                <Label Text="Job link" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
-                <Label Text="{Binding Entry.JobUrl}" FontSize="18" TextColor="{AppThemeBinding Light=#1565C0, Dark=#64B5F6}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding OpenLinkCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-                <Button Text="Open link"
-                        Command="{Binding OpenLinkCommand}"
-                        IsVisible="{Binding HasLink}"
-                        HorizontalOptions="Start"
-                        Margin="0,6,0,0" />
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Company" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Entry Text="{Binding EditCompany}" Placeholder="e.g. Contoso" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Salary" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Entry Text="{Binding EditSalary}" Placeholder="e.g. €70,000 / year" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Status" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Picker ItemsSource="{Binding Statuses}"
+                            SelectedItem="{Binding SelectedStatus}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Job link (optional)" FontAttributes="Bold" FontSize="13" TextColor="Gray" />
+                    <Entry Text="{Binding EditJobUrl}"
+                           Keyboard="Url"
+                           Placeholder="https://example.com/jobs/..." />
+                </VerticalStackLayout>
+
+                <HorizontalStackLayout Spacing="10" Margin="0,10,0,0">
+                    <Button Text="Save" Command="{Binding SaveCommand}" />
+                    <Button Text="Cancel"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light=#1565C0, Dark=#64B5F6}" />
+                </HorizontalStackLayout>
+
             </VerticalStackLayout>
 
         </VerticalStackLayout>

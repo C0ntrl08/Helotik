@@ -24,9 +24,11 @@ namespace Juribi
 
             builder.Services.AddTransient<JobApplicationListViewModel>();
             builder.Services.AddTransient<JobApplicationDetailViewModel>();
+            builder.Services.AddTransient<JobApplicationEditViewModel>();
 
             builder.Services.AddTransient<MainPageView>();
             builder.Services.AddTransient<JobApplicationDetailPage>();
+            builder.Services.AddTransient<JobApplicationEditPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

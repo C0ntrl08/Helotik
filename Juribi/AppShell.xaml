@@ -7,8 +7,8 @@
     Title="Juribi">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPageView}"
-        Route="Views/MainPageView" />
+    Title="Home"
+    ContentTemplate="{DataTemplate local:MainPageView}"
+    Route="MainPageView" />
 
 </Shell>

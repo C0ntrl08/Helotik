@@ -84,4 +84,10 @@
 	  <Folder Include="External-Components\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Views\JobApplicationEditPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

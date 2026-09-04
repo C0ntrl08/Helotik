@@ -52,5 +52,28 @@ namespace Juribi.ViewModels
             var route = $"{nameof(JobApplicationDetailPage)}?id={entry.Id}";
             await Shell.Current.GoToAsync(route);
         }
+
+        [RelayCommand]
+        private static Task AddNewAsync()
+            => Shell.Current.GoToAsync(nameof(JobApplicationEditPage));
+
+        [RelayCommand]
+        private async Task RemoveAsync(JobApplication? entry)
+        {
+            if (entry is null)
+                return;
+
+            var confirmed = await Shell.Current.DisplayAlert(
+                "Remove entry",
+                $"Remove \"{entry.JobName}\"? This cannot be undone.",
+                "Remove",
+                "Cancel");
+
+            if (!confirmed)
+                return;
+
+            await _repository.DeleteAsync(entry.Id);
+            Entries.Remove(entry);
+        }
     }
 }

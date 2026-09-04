@@ -5,6 +5,11 @@
              x:Class="Juribi.MainPageView"
              Title="Job Applications">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add"
+                     Command="{Binding AddNewCommand}" />
+    </ContentPage.ToolbarItems>
+
     <Grid RowDefinitions="Auto,*">
 
         <!-- Column headers -->
@@ -12,7 +17,7 @@
               Padding="15,10"
               ColumnSpacing="10"
               BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#2A2A2A}"
-              ColumnDefinitions="2*,2*,2*,1.2*,0.6*">
+              ColumnDefinitions="2*,2*,2*,1.2*,0.6*,Auto">
             <Label Grid.Column="0" Text="Job" FontAttributes="Bold" />
             <Label Grid.Column="1" Text="Company" FontAttributes="Bold" />
             <Label Grid.Column="2" Text="Salary" FontAttributes="Bold" />
@@ -31,32 +36,56 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:JobApplication">
-                    <Grid Padding="15,12"
-                          ColumnSpacing="10"
-                          ColumnDefinitions="2*,2*,2*,1.2*,0.6*">
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenDetailCommand}"
-                                CommandParameter="{Binding .}" />
-                        </Grid.GestureRecognizers>
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Remove"
+                                           BackgroundColor="#D32F2F"
+                                           IsDestructive="True"
+                                           Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveCommand}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
 
-                        <Label Grid.Column="0" Text="{Binding JobName}" LineBreakMode="TailTruncation" />
-                        <Label Grid.Column="1" Text="{Binding Company}" LineBreakMode="TailTruncation" />
-                        <Label Grid.Column="2" Text="{Binding Salary}" LineBreakMode="TailTruncation" />
-                        <Label Grid.Column="3" Text="{Binding Status}" LineBreakMode="TailTruncation" />
-                        <Label Grid.Column="4"
-                               Text="&#128279;"
-                               HorizontalTextAlignment="Center"
-                               IsVisible="{Binding JobUrl, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+                        <Grid Padding="15,12"
+                              ColumnSpacing="10"
+                              ColumnDefinitions="2*,2*,2*,1.2*,0.6*,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenDetailCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
 
-                        <!-- Invalid entry marker -->
-                        <BoxView Grid.Column="0"
-                                 Grid.ColumnSpan="5"
-                                 HeightRequest="2"
-                                 VerticalOptions="End"
-                                 Color="#D32F2F"
-                                 IsVisible="{Binding IsValid, Converter={StaticResource InvertedBoolConverter}}" />
-                    </Grid>
+                            <Label Grid.Column="0" Text="{Binding JobName}" LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="1" Text="{Binding Company}" LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="2" Text="{Binding Salary}" LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="3" Text="{Binding Status}" LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="4"
+                                   Text="&#128279;"
+                                   HorizontalTextAlignment="Center"
+                                   IsVisible="{Binding JobUrl, Converter={StaticResource IsNotNullOrEmptyConverter}}" />
+
+                            <!-- Windows-only Remove button (SwipeView is unreliable on Windows) -->
+                            <Button Grid.Column="5"
+                                    Text="Remove"
+                                    Padding="12,4"
+                                    FontSize="12"
+                                    BackgroundColor="#D32F2F"
+                                    TextColor="White"
+                                    VerticalOptions="Center"
+                                    IsVisible="{OnPlatform Default=false, WinUI=true}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                            <!-- Invalid entry marker -->
+                            <BoxView Grid.Column="0"
+                                     Grid.ColumnSpan="6"
+                                     HeightRequest="2"
+                                     VerticalOptions="End"
+                                     Color="#D32F2F"
+                                     IsVisible="{Binding IsValid, Converter={StaticResource InvertedBoolConverter}}" />
+                        </Grid>
+                    </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
