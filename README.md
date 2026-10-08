@@ -25,4 +25,4 @@ Helotik is a .NET 10 solution containing a .NET MAUI cross-platform application 
 - Use repository abstractions for persistence to keep services testable (use mocks or in-memory stores for unit tests).
 
 ## License
-Check the repository for a LICENSE file. If none exists, assume proprietary until a license is added.
+MIT License
